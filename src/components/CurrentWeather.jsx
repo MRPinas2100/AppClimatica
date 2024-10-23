@@ -9,12 +9,14 @@ export const CurrentWeather = ({ currentWeather }) => {
         className="weather-icon"
       />
       <h2 className="temperature">
-        {temperature} <span>°C</span>
+        {temperature} {temperature && <span>°C</span>}
       </h2>
       <p className="description">{description}</p>
-      <p className="city-and-region">
-        {name} - {region}
-      </p>
+      {name && (
+        <p className="city-and-region">
+          {name ? name : "No weather"} - {region ? region : "information"}
+        </p>
+      )}
     </div>
   )
 }

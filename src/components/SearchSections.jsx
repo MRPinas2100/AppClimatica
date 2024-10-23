@@ -1,7 +1,9 @@
 import { useRef } from "react"
+import { getLocation } from "../services/getGlobalPositionUser"
 
 export const SearchSection = ({ getApiData }) => {
   const inputSearch = useRef(null)
+
   const handleCitySearch = (event) => {
     event.preventDefault()
     const searchInput = event.target.querySelector(".search-input")
@@ -9,17 +11,18 @@ export const SearchSection = ({ getApiData }) => {
     getApiData({ value, geo: false })
   }
 
-  const handleLocationSearch = () => {
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords
-        getApiData({ value: { latitude, longitude }, geo: true })
-      },
-      () => {
-        alert("Location access denied.")
-      }
-    )
+  const handleLocationSearch = async () => {
+    const data = await getLocation()
+    const { latitude, longitude } = data
+    getApiData({ value: { latitude, longitude }, geo: true })
     inputSearch.current.value = ""
+  }
+
+  const handleChangeInput = (event) => {
+    const { value } = event.target
+    if (value === "") {
+      handleLocationSearch()
+    }
   }
 
   return (
@@ -28,6 +31,7 @@ export const SearchSection = ({ getApiData }) => {
         <span className="material-symbols-outlined">search</span>
         <input
           ref={inputSearch}
+          onChange={handleChangeInput}
           type="search"
           className="search-input"
           placeholder="Enter a city name"
